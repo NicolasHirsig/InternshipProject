@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Hero } from '../hero';
-import { mockHeroes } from '../mock-heroes';
+import { HeroService } from '../services/hero.service'
+import { MessageService } from '../services/message.service'
 
 @Component({
   selector: 'app-heroes',
@@ -9,16 +11,21 @@ import { mockHeroes } from '../mock-heroes';
 })
 export class HeroesComponent implements OnInit {
 
-  heroes = mockHeroes;
+  heroes: Hero[];
   selectedHero: Hero;
 
-  constructor() { }
+  constructor(private heroService: HeroService, private messageService: MessageService) { }   // makes an instance of services
 
   ngOnInit(): void {
+    this.getHeroes();
   }
+
+  getHeroes(): void {
+    this.heroService.getHeroes().subscribe(fetchedHeroes => this.heroes = fetchedHeroes)  // getter returns observable, which we subscribe to and export the value into fetchedHeroes. 
+  }                                                                                       // Then we give the heroes variable the value of fetchedHeroes
 
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
+    this.messageService.add(`HeroesComponent: Selected hero: ${hero.name}`)
   }
-
 }
